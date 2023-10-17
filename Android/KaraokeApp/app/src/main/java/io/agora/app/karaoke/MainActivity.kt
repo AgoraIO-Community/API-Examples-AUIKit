@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                         return@setPositiveButton
                     }
                     // 查询房间信息
-                    KaraokeUiKit.getRoomList(0, 100,
+                    KaraokeUiKit.getRoomList(0, 50,
                         success = { list ->
                             val roomInfo = list.findLast { it.roomName == roomName }
                             if(roomInfo == null){
