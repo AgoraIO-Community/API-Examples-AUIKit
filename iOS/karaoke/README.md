@@ -36,9 +36,13 @@
 ### 1.集成SDK
 #### a.新建项目
 **打开XCode如按下列步骤新建一个项目, 例如以```AUIKitDemo```为项目名称**
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/ios/create_new_ios_project1.jpg)
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/ios/create_new_ios_project2.jpg)
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/ios/create_new_ios_project3.jpg)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project1.jpg)
+>
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project2.jpg)
+>
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project3.jpg)
+>
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project4.jpg)
 
 
 #### b.添加依赖库
@@ -74,7 +78,7 @@ end
 ```
 
 #### c.设置权限
-**打开```AUIKitDemo.xcodeproj```，配置麦克风和摄像头权限**
+**打开```AUIKitDemo.xcodeproj```，配置麦克风权限**
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/add_privacy_to_project.jpg)
 
