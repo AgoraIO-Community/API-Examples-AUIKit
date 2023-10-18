@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
             val input = EditText(this@MainActivity)
             input.hint = "Room Name"
             AlertDialog.Builder(this@MainActivity)
-                .setTitle("Create Room")
+                .setTitle("Launch Room")
                 .setView(input)
                 .setPositiveButton("Confirm"){ dialog: DialogInterface, i: Int ->
                     // 确认创建房间
