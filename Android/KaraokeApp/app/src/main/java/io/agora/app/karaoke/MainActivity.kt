@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
         findViewById<Button>(R.id.btnCreateRoom).setOnClickListener {
             // 创建房间按钮点击
             // 随机生成房间名
-            val roomName = "Room-${Random().nextInt(100) + 1000}"
+            val roomName = "${Random().nextInt(100) + 1000}"
             // 调用KaraokeUiKit创建房间
             val createRoomInfo = AUICreateRoomInfo()
             createRoomInfo.roomName = roomName

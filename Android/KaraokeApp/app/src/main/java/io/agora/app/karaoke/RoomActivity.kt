@@ -53,7 +53,7 @@ class RoomActivity : FragmentActivity() {
         }
 
         // 检查运行时权限
-        PermissionHelp(this).checkCameraAndMicPerms(
+        PermissionHelp(this).checkMicPerm(
             granted = {
                 // 获取到权限
                 // 并启动房间
