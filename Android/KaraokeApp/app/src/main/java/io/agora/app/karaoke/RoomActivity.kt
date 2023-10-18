@@ -33,6 +33,7 @@ class RoomActivity : FragmentActivity() {
         override fun onRoomDestroy(roomId: String) {
             super.onRoomDestroy(roomId)
             // 房间被销毁
+            destroyRoom()
             finish()
         }
     }
@@ -47,6 +48,7 @@ class RoomActivity : FragmentActivity() {
         karaokeRoomView.setFragmentActivity(this@RoomActivity)
         karaokeRoomView.setOnShutDownClick {
             // 主动退出房间
+            destroyRoom()
             finish()
         }
 
@@ -67,8 +69,13 @@ class RoomActivity : FragmentActivity() {
         KaraokeUiKit.registerRoomRespObserver(roomManagerRespObserver)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onBackPressed() {
+        // 系统键盘返回主动退出房间时
+        destroyRoom()
+        super.onBackPressed()
+    }
+
+    private fun destroyRoom() {
         // 退出/销毁房间
         KaraokeUiKit.destroyRoom(roomInfo.roomId)
         // 取消注册房间事件观察者
