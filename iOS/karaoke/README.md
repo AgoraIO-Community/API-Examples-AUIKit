@@ -149,12 +149,21 @@ override func viewDidLoad() {
 ```
 
 ### 4.进入房间
+**ViewController里声明一个Karaoke房间容器的属性**
+```swift
+class ViewController: UIViewController {
+    var karaokeView: AUIKaraokeRoomView?
+
+    ....
+}
+```
 #### 创建房间详情页并启动Karaoke房间
 ```swift
 func enterRoom(roomInfo: AUIRoomInfo) {
     karaokeView = AUIKaraokeRoomView(frame: self.view.bounds)
     karaokeView!.onClickOffButton = { [weak self] in
         //房间内点击退出
+        self?.destroyRoom()
     }
     KaraokeUIKit.shared.launchRoom(roomInfo: roomInfo,
                                    karaokeView: karaokeView!) {[weak self] error in
