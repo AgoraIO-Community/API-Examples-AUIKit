@@ -1,4 +1,3 @@
-import java.net.URI
 
 pluginManagement {
     repositories {
@@ -13,7 +12,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         // 添加jitpack仓库：拉取auikit库
-        maven { url = URI.create("https://www.jitpack.io") }
+        maven { url = java.net.URI.create("https://www.jitpack.io") }
     }
 }
 
