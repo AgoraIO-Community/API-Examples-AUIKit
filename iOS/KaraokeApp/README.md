@@ -172,14 +172,15 @@ func enterRoom(roomInfo: AUIRoomInfo) {
     karaokeView = AUIKaraokeRoomView(frame: self.view.bounds)
     karaokeView!.onClickOffButton = { [weak self] in
         //房间内点击退出
-        self?.destroyRoom()
+        //self?.destroyRoom()
+        assert(false, "正常退出需要打开上面的注释并且删掉当前的assert")
     }
     KaraokeUIKit.shared.launchRoom(roomInfo: roomInfo,
                                    karaokeView: karaokeView!) {[weak self] error in
         guard let self = self else {return}
         if let _ = error { return }
         //订阅房间被销毁回调
-        KaraokeUIKit.shared.bindRespDelegate(delegate: self)
+        //KaraokeUIKit.shared.bindRespDelegate(delegate: self)
         self.view.addSubview(self.karaokeView!)
     }
 }
@@ -245,7 +246,7 @@ func destroyRoom(roomId: String) {
 }
 ```
 #### a.主动退出
-**在上一步创建karaokeView时设置回调，即可主动退出房间**
+**在[创建房间详情页并启动Karaoke房间](#创建房间详情页并启动karaoke房间)里打开注释设置回调，调用destroyRoom方法，即可主动退出房间**
 ```swift
 //AUIKaraokeRoomView提供了onClickOffButton点击返回的clousure
 karaokeView.onClickOffButton = { [weak self] in
@@ -255,7 +256,7 @@ karaokeView.onClickOffButton = { [weak self] in
 ```
 
 #### b.被动退出
-**在加入房间之后订阅AUIRoomManagerRespDelegate的回调**
+**在[创建房间详情页并启动Karaoke房间](#创建房间详情页并启动karaoke房间)里打开注释订阅AUIRoomManagerRespDelegate的回调**
 ```swift
 KaraokeUIKit.shared.bindRespDelegate(delegate: self)
 ```
