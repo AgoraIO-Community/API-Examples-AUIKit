@@ -50,6 +50,8 @@
 **将以下源码复制到自己项目里，例如放在```AUIKitDemo.xcodeproj```同级目录下**
 
 - [AScenesKit](https://github.com/AgoraIO-Community/AUIKaraoke/tree/main/iOS/AScenesKit)
+>
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/copy_asceneskit.jpg)
 
 **在```AUIKitDemo.xcodeproj```同级目录下创建一个```Podfile```文件，并添加如下内容**
 ```
