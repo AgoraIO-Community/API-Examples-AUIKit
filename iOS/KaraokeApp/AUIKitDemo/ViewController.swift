@@ -100,17 +100,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: AUIRoomManagerRespDelegate {
-    func onRoomDestroy(roomId: String) {
-        self.destroyRoom(roomId: roomId)
-    }
-    
-    func onRoomInfoChange(roomId: String, roomInfo: AUIKitCore.AUIRoomInfo) {
-    }
-    
-    func onRoomAnnouncementChange(roomId: String, announcement: String) {
-    }
-    
-    func onRoomUserBeKicked(roomId: String, userId: String) {
+    @objc func onRoomDestroy(roomId: String) {
         self.destroyRoom(roomId: roomId)
     }
 }

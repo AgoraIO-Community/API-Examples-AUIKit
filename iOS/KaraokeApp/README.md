@@ -256,32 +256,30 @@ karaokeView.onClickOffButton = { [weak self] in
 ```
 
 #### b.被动退出
-**在[创建房间详情页并启动Karaoke房间](#创建房间详情页并启动karaoke房间)里打开注释订阅AUIRoomManagerRespDelegate的回调**
+**首先在[创建房间详情页并启动Karaoke房间](#创建房间详情页并启动karaoke房间)里打开注释订阅AUIRoomManagerRespDelegate的回调
+然后在销毁房间时设置取消订阅
+最后后通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy来处理房间销毁**
 ```swift
-KaraokeUIKit.shared.bindRespDelegate(delegate: self)
-```
+KaraokeUIKit.shared.launchRoom(roomInfo: roomInfo,
+                                   karaokeView: karaokeView!) {[weak self] error in
+    ...
+    
+    KaraokeUIKit.shared.bindRespDelegate(delegate: self)
 
-**在退出房间时取消订阅**
-```swift
-KaraokeUIKit.shared.unbindRespDelegate(delegate: self)
-```
+    ...
+}
 
-**然后通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy来处理房间销毁**
-```swift
+func destroyRoom(roomId: String) {
+    ...
+
+    KaraokeUIKit.shared.unbindRespDelegate(delegate: self)
+
+    ...
+}
+
 extension ViewController: AUIRoomManagerRespDelegate {
     //房间销毁
-    func onRoomDestroy(roomId: String) {
-        self.destroyRoom()
-    }
-    
-    func onRoomInfoChange(roomId: String, roomInfo: AUIKitCore.AUIRoomInfo) {
-    }
-    
-    func onRoomAnnouncementChange(roomId: String, announcement: String) {
-    }
-    
-    //被房主踢出
-    func onRoomUserBeKicked(roomId: String, userId: String) {
+    @objc func onRoomDestroy(roomId: String) {
         self.destroyRoom()
     }
 }
