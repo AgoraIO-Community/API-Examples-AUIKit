@@ -13,6 +13,7 @@ import AScenesKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        //随机设置用户uid
         let uid = Int(arc4random_uniform(99999999))
         let commonConfig = AUICommonConfig()
         commonConfig.host = "https://service.agora.io/uikit-karaoke"

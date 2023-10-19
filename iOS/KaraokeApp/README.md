@@ -36,6 +36,7 @@
 ### 1.集成SDK
 #### a.新建项目
 **打开XCode如按下列步骤新建一个项目, 例如以```AUIKitDemo```为项目名称**
+>
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project1.jpg)
 >
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project2.jpg)

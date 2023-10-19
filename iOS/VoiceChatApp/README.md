@@ -12,15 +12,15 @@
     - [b.添加依赖库](#b添加依赖库)
     - [c.设置权限](#c设置权限)
     - [d.运行工程](#d运行工程)
-  - [2. 初始化VoiceChatUIKit](#2-初始化VoiceChatUIKit)
+  - [2. 初始化VoiceChatUIKit](#2-初始化voicechatuikit)
   - [3. 房主创建房间](#3-房主创建房间)
     - [a.添加“创建房间”按钮](#a添加创建房间按钮)
-    - [b.创建VoiceChat房间](#b创建VoiceChat房间)
+    - [b.创建VoiceChat房间](#b创建voicechat房间)
   - [4.进入房间](#4进入房间)
-    - [创建房间详情页并启动VoiceChat房间](#创建房间详情页并启动VoiceChat房间)
+    - [创建房间详情页并启动VoiceChat房间](#创建房间详情页并启动voicechat房间)
   - [5. 观众进入房间准备（可选）](#5-观众进入房间准备可选)
     - [a.添加“加入房间”按钮](#a添加加入房间按钮)
-    - [b.获取VoiceChat房间信息](#b获取VoiceChat房间信息)
+    - [b.获取VoiceChat房间信息](#b获取voicechat房间信息)
   - [6. 退出/销毁房间](#6-退出销毁房间)
     - [a.主动退出](#a主动退出)
     - [b.被动退出](#b被动退出)
@@ -36,6 +36,7 @@
 ### 1.集成SDK
 #### a.新建项目
 **打开XCode如按下列步骤新建一个项目, 例如以```AUIKitDemo```为项目名称**
+>
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project1.jpg)
 >
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project2.jpg)
@@ -48,7 +49,7 @@
 #### b.添加依赖库
 **将以下源码复制到自己项目里，例如放在```AUIKitDemo.xcodeproj```同级目录下**
 
-- [AScenesKit](https://github.com/AgoraIO-Community/AUIVoiceChat/tree/main/iOS/AScenesKit)
+- [AScenesKit](https://github.com/AgoraIO-Community/AUIVoiceRoom/tree/main/iOS/AScenesKit)
 
 **在```AUIKitDemo.xcodeproj```同级目录下创建一个```Podfile```文件，并添加如下内容**
 ```
