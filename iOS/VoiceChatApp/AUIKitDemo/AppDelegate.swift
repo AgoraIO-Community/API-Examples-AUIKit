@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //随机设置用户uid
         let uid = Int(arc4random_uniform(99999999))
         let commonConfig = AUICommonConfig()
-        commonConfig.host = "https://service.agora.io/uikit-karaoke"
+        commonConfig.host = "https://service.agora.io/uikit-voiceroom"
         commonConfig.userId = "\(uid)"
         commonConfig.userName = "user_\(uid)"
         commonConfig.userAvatar = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_1.png"
