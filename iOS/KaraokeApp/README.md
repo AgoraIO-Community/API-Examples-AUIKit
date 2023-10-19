@@ -256,8 +256,8 @@ karaokeView.onClickOffButton = { [weak self] in
 ```
 
 #### b.被动退出
-**首先在[创建房间详情页并启动Karaoke房间](#创建房间详情页并启动karaoke房间)里打开注释订阅AUIRoomManagerRespDelegate的回调**
-**然后在销毁房间时设置取消订阅**
+**首先在[创建房间详情页并启动Karaoke房间](#创建房间详情页并启动karaoke房间)里打开注释订阅AUIRoomManagerRespDelegate的回调**  
+**然后在销毁房间时设置取消订阅**  
 **最后后通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy来处理房间销毁**
 ```swift
 KaraokeUIKit.shared.launchRoom(roomInfo: roomInfo,
