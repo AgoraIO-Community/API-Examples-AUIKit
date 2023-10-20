@@ -62,6 +62,7 @@ target 'AUIKitDemo' do
   use_frameworks!
   
   pod 'AScenesKit', :path => './AScenesKit'
+  pod 'AgoraRtcEngine_Special_iOS', '4.1.1.17'
 end
 
 post_install do |installer|
