@@ -282,6 +282,11 @@ extension ViewController: AUIRoomManagerRespDelegate {
     @objc func onRoomDestroy(roomId: String) {
         self.destroyRoom(roomId: roomId)
     }
+
+    //被踢出房间
+    @objc func onRoomUserBeKicked(roomId: String,userId: String) {
+        self.destroyRoom(roomId: roomId)
+    }
 }
 ```
 
