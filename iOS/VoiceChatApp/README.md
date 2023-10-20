@@ -169,7 +169,7 @@ func enterRoom(roomInfo: AUIRoomInfo) {
     VoiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds)
     VoiceChatView!.onClickOffButton = { [weak self] in
         //房间内点击退出
-        //self?.destroyRoom()
+        //self?.destroyRoom(roomId: roomInfo.roomId)
         assert(false, "正常退出需要打开上面的注释并且删掉当前的assert")
     }
     
@@ -251,7 +251,7 @@ func destroyRoom(roomId: String) {
 //AUIVoiceChatRoomView提供了onClickOffButton点击返回的clousure
 VoiceChatView.onClickOffButton = { [weak self] in
     //点击退出
-    self?.destroyRoom()
+    self?.destroyRoom(roomId: roomInfo.roomId)
 }
 ```
 
@@ -280,7 +280,7 @@ func destroyRoom(roomId: String) {
 extension ViewController: AUIRoomManagerRespDelegate {
     //房间销毁
     @objc func onRoomDestroy(roomId: String) {
-        self.destroyRoom()
+        self.destroyRoom(roomId: roomId)
     }
 }
 ```

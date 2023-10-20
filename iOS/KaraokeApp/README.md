@@ -170,7 +170,7 @@ func enterRoom(roomInfo: AUIRoomInfo) {
     karaokeView = AUIKaraokeRoomView(frame: self.view.bounds)
     karaokeView!.onClickOffButton = { [weak self] in
         //房间内点击退出
-        //self?.destroyRoom()
+        //self?.destroyRoom(roomId: roomInfo.roomId)
         assert(false, "正常退出需要打开上面的注释并且删掉当前的assert")
     }
     KaraokeUIKit.shared.launchRoom(roomInfo: roomInfo,
@@ -228,8 +228,6 @@ override func viewDidLoad() {
 }
 ```
 
-
-
 ### 6. 退出/销毁房间
 **设置退出方法**
 ```swift
@@ -249,7 +247,7 @@ func destroyRoom(roomId: String) {
 //AUIKaraokeRoomView提供了onClickOffButton点击返回的clousure
 karaokeView.onClickOffButton = { [weak self] in
     //点击退出
-    self?.destroyRoom()
+    self?.destroyRoom(roomId: roomInfo.roomId)
 }
 ```
 
@@ -278,7 +276,7 @@ func destroyRoom(roomId: String) {
 extension ViewController: AUIRoomManagerRespDelegate {
     //房间销毁
     @objc func onRoomDestroy(roomId: String) {
-        self.destroyRoom()
+        self.destroyRoom(roomId: roomId)
     }
 }
 ```
