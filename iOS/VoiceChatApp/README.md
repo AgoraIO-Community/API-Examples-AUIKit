@@ -12,7 +12,6 @@
       - [a.新建项目](#a新建项目)
       - [b.添加依赖库](#b添加依赖库)
       - [c.设置权限](#c设置权限)
-      - [d.运行工程](#d运行工程)
     - [2. 初始化VoiceChatUIKit](#2-初始化voicechatuikit)
     - [3. 房主创建房间](#3-房主创建房间)
       - [a.添加“创建房间”按钮](#a添加创建房间按钮)
@@ -82,12 +81,11 @@ end
 ```
 
 #### c.设置权限
-**打开```AUIKitDemo.xcodeproj```，配置麦克风权限**
+**打开```AUIKitDemo.xcworkspace```(和AUIKitDemo.xcodeproj同级目录)，配置麦克风权限**
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/add_privacy_to_project.jpg)
 
-#### d.运行工程
-**关闭```AUIKitDemo.xcodeproj```, 打开新生成的```AUIKitDemo.xcworkspace```(和AUIKitDemo.xcodeproj同级目录)，即可体验添加了AUIKit依赖的工程**
+**即可体验添加了AUIKit依赖的工程**
 
 >⚠️Xcode15编译报错 ```Sandbox: rsync.samba(47334) deny(1) file-write-create...```
 
