@@ -1,8 +1,5 @@
 # KaraokeUIKit
 
-*[English](KaraokeUIKit.md) | 中文*
-
-
 <!-- TOC START -->
 
 - [KaraokeUIKit](#karaokeuikit)

@@ -1,8 +1,5 @@
 # VoiceChatUIKit
 
-*[English](VoiceChatUIKit.md) | 中文*
-
-
 <!-- TOC START -->
 
 - [VoiceChatUIKit](#voicechatuikit)
