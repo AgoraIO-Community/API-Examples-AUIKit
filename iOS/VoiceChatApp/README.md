@@ -213,7 +213,7 @@ override func viewDidLoad() {
     let saveAction = UIAlertAction(title: "确认", style: .default) { (_) in
         if let inputText = alertController.textFields?.first?.text {
             // 处理用户输入的内容
-            VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: nil, pageSize: 50) { error, roomList in
+            VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: 0, pageSize: 50) { error, roomList in
                 guard let roomList = roomList else {return}
                 for room in roomList {
                     if room.roomName == inputText {
@@ -241,7 +241,7 @@ func destroyRoom(roomId: String) {
     self.VoiceChatView?.onBackAction()
     self.VoiceChatView?.removeFromSuperview()
     
-    VoiceChatUIKit.shared.destoryRoom(roomId: roomId)
+    VoiceChatUIKit.shared.destroyRoom(roomId: roomId)
     //在退出房间时取消订阅
     VoiceChatUIKit.shared.unbindRespDelegate(delegate: self)
 }

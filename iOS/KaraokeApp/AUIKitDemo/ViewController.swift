@@ -55,7 +55,7 @@ class ViewController: UIViewController {
         let saveAction = UIAlertAction(title: "确认", style: .default) { (_) in
             if let inputText = alertController.textFields?.first?.text {
                 // 处理用户输入的内容
-                KaraokeUIKit.shared.getRoomInfoList(lastCreateTime: nil, pageSize: 50) { error, roomList in
+                KaraokeUIKit.shared.getRoomInfoList(lastCreateTime: 0, pageSize: 50) { error, roomList in
                     guard let roomList = roomList else {return}
                     for room in roomList {
                         if room.roomName == inputText {
@@ -93,7 +93,7 @@ class ViewController: UIViewController {
         self.karaokeView?.onBackAction()
         self.karaokeView?.removeFromSuperview()
         
-        KaraokeUIKit.shared.destoryRoom(roomId: roomId)
+        KaraokeUIKit.shared.destroyRoom(roomId: roomId)
         //在退出房间时取消订阅
         KaraokeUIKit.shared.unbindRespDelegate(delegate: self)
     }
