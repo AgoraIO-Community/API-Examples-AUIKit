@@ -1,0 +1,15 @@
+*.iml
+.gradle
+.idea
+/local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+/asceneskit/build.gradle
+/asceneskit/src/
+/asceneskit/libs/
+/asceneskit/consumer-rules.pro
+/asceneskit/proguard-rules.pro
