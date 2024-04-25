@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                 context = applicationContext
 
                 host = "https://service.shengwang.cn/uikit-v2"
-                appId = "925dd81d763a42919862fee9f3f204a7"
+                appId = ""
                 appCert = ""
                 imAppKey = ""
                 imClientId = ""
