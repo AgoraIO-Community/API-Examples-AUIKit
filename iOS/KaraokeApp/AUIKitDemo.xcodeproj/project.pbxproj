@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B161D6B8F0610D3CE1E63C6E /* Pods_AUIKitDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 052CB3869601D3E0CE3435F3 /* Pods_AUIKitDemo.framework */; };
+		DD2123C92BDA400A003A3C4E /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2123C72BDA400A003A3C4E /* KeyCenter.swift */; };
+		DD2123CA2BDA400A003A3C4E /* KaraokeUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2123C82BDA400A003A3C4E /* KaraokeUIKit.swift */; };
 		DD973C6A2ADE30CC0002453C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD973C692ADE30CC0002453C /* AppDelegate.swift */; };
 		DD973C6C2ADE30CC0002453C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD973C6B2ADE30CC0002453C /* SceneDelegate.swift */; };
 		DD973C6E2ADE30CC0002453C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD973C6D2ADE30CC0002453C /* ViewController.swift */; };
@@ -40,6 +42,8 @@
 		052CB3869601D3E0CE3435F3 /* Pods_AUIKitDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AUIKitDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66DB33D57C17B246972037A /* Pods-AUIKitDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AUIKitDemo.debug.xcconfig"; path = "Target Support Files/Pods-AUIKitDemo/Pods-AUIKitDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		D674176220A14DCA5F9518E0 /* Pods-AUIKitDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AUIKitDemo.release.xcconfig"; path = "Target Support Files/Pods-AUIKitDemo/Pods-AUIKitDemo.release.xcconfig"; sourceTree = "<group>"; };
+		DD2123C72BDA400A003A3C4E /* KeyCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
+		DD2123C82BDA400A003A3C4E /* KaraokeUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KaraokeUIKit.swift; sourceTree = "<group>"; };
 		DD973C662ADE30CC0002453C /* AUIKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AUIKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD973C692ADE30CC0002453C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DD973C6B2ADE30CC0002453C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -123,6 +127,8 @@
 		DD973C682ADE30CC0002453C /* AUIKitDemo */ = {
 			isa = PBXGroup;
 			children = (
+				DD2123C82BDA400A003A3C4E /* KaraokeUIKit.swift */,
+				DD2123C72BDA400A003A3C4E /* KeyCenter.swift */,
 				DD973C692ADE30CC0002453C /* AppDelegate.swift */,
 				DD973C6B2ADE30CC0002453C /* SceneDelegate.swift */,
 				DD973C6D2ADE30CC0002453C /* ViewController.swift */,
@@ -344,8 +350,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD2123C92BDA400A003A3C4E /* KeyCenter.swift in Sources */,
 				DD973C6E2ADE30CC0002453C /* ViewController.swift in Sources */,
 				DD973C6A2ADE30CC0002453C /* AppDelegate.swift in Sources */,
+				DD2123CA2BDA400A003A3C4E /* KaraokeUIKit.swift in Sources */,
 				DD973C6C2ADE30CC0002453C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -541,8 +549,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -580,8 +587,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

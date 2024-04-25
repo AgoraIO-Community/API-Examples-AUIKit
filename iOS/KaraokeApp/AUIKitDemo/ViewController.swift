@@ -32,17 +32,50 @@ class ViewController: UIViewController {
     }
 
     @objc func onCreateAction(_ button: UIButton) {
-        let roomId = Int(arc4random_uniform(99999999))
-        let room = AUICreateRoomInfo()
-        room.roomName = "\(roomId)"
         button.isEnabled = false
-        KaraokeUIKit.shared.createRoom(roomInfo: room) { roomInfo in
-            self.enterRoom(roomInfo: roomInfo!)
-            button.isEnabled = true
-        } failure: { error in
-            print("on create room fail: \(error.localizedDescription)")
-            button.isEnabled = true
+        
+        let roomId = Int(arc4random_uniform(99999999))
+        
+        let roomInfo = AUIRoomInfo()
+        roomInfo.roomId = "\(roomId)"
+        roomInfo.roomName = "\(roomId)"
+        roomInfo.owner = AUIRoomContext.shared.currentUserInfo
+                
+        let roomConfig = AUIRoomConfig()
+        //创建房间容器
+        let karaokeView = AUIKaraokeRoomView(frame: self.view.bounds)
+        karaokeView.onClickOffButton = { [weak self] in
+            //房间内点击退出
+            self?.destroyRoom(roomId: roomInfo.roomId)
         }
+        generateToken(channelName: "\(roomId)",
+                      roomConfig: roomConfig,
+                      completion: {[weak self] error in
+            guard let self = self else {return}
+            defer {
+                button.isEnabled = true
+            }
+            if let error = error {
+                self.navigationController?.popViewController(animated: true)
+                AUIToast.show(text: error.localizedDescription)
+                return
+            }
+            KaraokeUIKit.shared.createRoom(roomInfo: roomInfo,
+                                             roomConfig: roomConfig,
+                                             karaokeView: karaokeView) {[weak self] error in
+                guard let self = self else {return}
+                if let error = error {
+                    AUIToast.show(text: error.localizedDescription)
+                    return
+                }
+            }
+            
+            // 订阅房间被销毁回调
+            KaraokeUIKit.shared.bindRespDelegate(delegate: self)
+        })
+        
+        self.view.addSubview(karaokeView)
+        self.karaokeView = karaokeView
     }
     
     @objc func onJoinAction() {
@@ -73,19 +106,33 @@ class ViewController: UIViewController {
     }
     
     func enterRoom(roomInfo: AUIRoomInfo) {
-        karaokeView = AUIKaraokeRoomView(frame: self.view.bounds)
-        karaokeView!.onClickOffButton = { [weak self] in
-            //点击退出
+        let karaokeView = AUIKaraokeRoomView(frame: self.view.bounds)
+        karaokeView.onClickOffButton = { [weak self] in
+            //房间内点击退出
             self?.destroyRoom(roomId: roomInfo.roomId)
         }
-        KaraokeUIKit.shared.launchRoom(roomInfo: roomInfo,
-                                       karaokeView: karaokeView!) {[weak self] error in
+        let roomId = roomInfo.roomId
+        let roomConfig = AUIRoomConfig()
+        generateToken(channelName: roomId,
+                      roomConfig: roomConfig) {[weak self] err  in
             guard let self = self else {return}
-            if let _ = error { return }
-            //订阅房间被销毁回调
+            KaraokeUIKit.shared.enterRoom(roomId: roomId,
+                                          roomConfig: roomConfig,
+                                          karaokeView: karaokeView) {[weak self] roomInfo, error in
+                guard let self = self else {return}
+                if let error = error {
+                    self.navigationController?.popViewController(animated: true)
+                    AUIToast.show(text: error.localizedDescription)
+                    return
+                }
+            }
+            
+            // 订阅房间被销毁回调
             KaraokeUIKit.shared.bindRespDelegate(delegate: self)
-            self.view.addSubview(self.karaokeView!)
         }
+        
+        self.view.addSubview(karaokeView)
+        self.karaokeView = karaokeView
     }
     
     func destroyRoom(roomId: String) {
@@ -93,14 +140,71 @@ class ViewController: UIViewController {
         self.karaokeView?.onBackAction()
         self.karaokeView?.removeFromSuperview()
         
-        KaraokeUIKit.shared.destroyRoom(roomId: roomId)
+        KaraokeUIKit.shared.leaveRoom(roomId: roomId)
         //在退出房间时取消订阅
         KaraokeUIKit.shared.unbindRespDelegate(delegate: self)
     }
+    
+    
+    private func generateToken(channelName: String,
+                               roomConfig: AUIRoomConfig,
+                               completion: @escaping ((Error?) -> Void)) {
+        let uid = KaraokeUIKit.shared.commonConfig?.owner?.userId ?? ""
+        let rtcChorusChannelName = "\(channelName)_rtc_ex"
+        roomConfig.channelName = channelName
+        roomConfig.rtcChorusChannelName = rtcChorusChannelName
+        print("generateTokens: \(uid)")
+
+        let group = DispatchGroup()
+
+        var err: Error?
+        group.enter()
+        let tokenModel1 = AUITokenGenerateNetworkModel()
+        tokenModel1.channelName = channelName
+        tokenModel1.userId = uid
+        tokenModel1.request { error, result in
+            defer {
+                if err == nil {
+                    err = error
+                }
+                group.leave()
+            }
+            guard let tokenMap = result as? [String: String], tokenMap.count >= 2 else {return}
+            roomConfig.rtcToken = tokenMap["rtcToken"] ?? ""
+            roomConfig.rtmToken = tokenMap["rtmToken"] ?? ""
+        }
+
+        group.enter()
+        let tokenModel2 = AUITokenGenerateNetworkModel()
+        tokenModel2.channelName = rtcChorusChannelName
+        tokenModel2.userId = uid
+        tokenModel2.request { error, result in
+            defer {
+                if err == nil {
+                    err = error
+                }
+                group.leave()
+            }
+
+            guard let tokenMap = result as? [String: String], tokenMap.count >= 2 else {return}
+
+            roomConfig.rtcChorusRtcToken = tokenMap["rtcToken"] ?? ""
+        }
+
+        group.notify(queue: DispatchQueue.main) {
+            completion(err)
+        }
+    }
 }
 
-extension ViewController: AUIRoomManagerRespDelegate {
-    @objc func onRoomDestroy(roomId: String) {
+extension ViewController: AUIKaraokeRoomServiceRespDelegate {
+    //房间销毁
+    func onRoomDestroy(roomId: String) {
+        self.destroyRoom(roomId: roomId)
+    }
+    
+    //被踢出房间
+    func onRoomUserBeKicked(roomId: String, userId: String) {
         self.destroyRoom(roomId: roomId)
     }
 }

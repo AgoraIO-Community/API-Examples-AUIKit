@@ -15,15 +15,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //随机设置用户uid
         let uid = Int(arc4random_uniform(99999999))
+        // 设置基础信息到KaraokeUIKit里
         let commonConfig = AUICommonConfig()
-        commonConfig.host = "https://service.agora.io/uikit-karaoke"
-        commonConfig.userId = "\(uid)"
-        commonConfig.userName = "user_\(uid)"
-        commonConfig.userAvatar = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_1.png"
-        KaraokeUIKit.shared.setup(roomConfig: commonConfig,
-                                  ktvApi: nil,      //如果有外部初始化的ktv api
-                                  rtcEngine: nil,   //如果有外部初始化的rtc engine
-                                  rtmClient: nil)   //如果有外部初始化的rtm client
+        commonConfig.appId = KeyCenter.AppId
+        commonConfig.appCert = KeyCenter.AppCertificate
+        commonConfig.imAppKey = KeyCenter.IMAppKey
+        commonConfig.imClientId = KeyCenter.IMClientId
+        commonConfig.imClientSecret = KeyCenter.IMClientSecret
+        commonConfig.host = KeyCenter.HostUrl
+        let ownerInfo = AUIUserThumbnailInfo()
+        ownerInfo.userId = "\(uid)"
+        ownerInfo.userName = "user_\(uid)"
+        ownerInfo.userAvatar = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_1.png"
+        commonConfig.owner = ownerInfo
+        KaraokeUIKit.shared.setup(commonConfig: commonConfig,
+                                  apiConfig: nil)
         
         // Override point for customization after application launch.
         return true
