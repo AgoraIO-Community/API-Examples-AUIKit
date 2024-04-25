@@ -14,6 +14,8 @@
 		058D832C2ADF84150066E502 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058D832B2ADF84150066E502 /* Assets.xcassets */; };
 		058D832F2ADF84150066E502 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 058D832D2ADF84150066E502 /* LaunchScreen.storyboard */; };
 		0FDF228EE11B1BFC3DAC7810 /* Pods_AUIKitDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 044FB1A6D8DB024E3B340CF4 /* Pods_AUIKitDemo.framework */; };
+		DDFC71A92BD9F3AE00690EF6 /* VoiceChatUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFC71A82BD9F3AE00690EF6 /* VoiceChatUIKit.swift */; };
+		DDFC71AB2BD9FCF400690EF6 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFC71AA2BD9FCF400690EF6 /* KeyCenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		058D83302ADF84150066E502 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		214A096F06017BED0D9A1A7E /* Pods-AUIKitDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AUIKitDemo.release.xcconfig"; path = "Target Support Files/Pods-AUIKitDemo/Pods-AUIKitDemo.release.xcconfig"; sourceTree = "<group>"; };
 		5548F5DFADE6F9A2953E22F5 /* Pods-AUIKitDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AUIKitDemo.debug.xcconfig"; path = "Target Support Files/Pods-AUIKitDemo/Pods-AUIKitDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		DDFC71A82BD9F3AE00690EF6 /* VoiceChatUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceChatUIKit.swift; sourceTree = "<group>"; };
+		DDFC71AA2BD9FCF400690EF6 /* KeyCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,8 @@
 		058D83212ADF84150066E502 /* AUIKitDemo */ = {
 			isa = PBXGroup;
 			children = (
+				DDFC71AA2BD9FCF400690EF6 /* KeyCenter.swift */,
+				DDFC71A82BD9F3AE00690EF6 /* VoiceChatUIKit.swift */,
 				058D83222ADF84150066E502 /* AppDelegate.swift */,
 				058D83242ADF84150066E502 /* SceneDelegate.swift */,
 				058D83262ADF84150066E502 /* ViewController.swift */,
@@ -224,9 +230,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDFC71AB2BD9FCF400690EF6 /* KeyCenter.swift in Sources */,
 				058D83272ADF84150066E502 /* ViewController.swift in Sources */,
 				058D83232ADF84150066E502 /* AppDelegate.swift in Sources */,
 				058D83252ADF84150066E502 /* SceneDelegate.swift in Sources */,
+				DDFC71A92BD9F3AE00690EF6 /* VoiceChatUIKit.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

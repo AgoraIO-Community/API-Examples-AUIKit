@@ -30,40 +30,82 @@ class ViewController: UIViewController {
         view.addSubview(joinButton)
     }
 
-
     @objc func onCreateAction(_ button: UIButton) {
-        let roomId = Int(arc4random_uniform(99999999))
-        let room = AUICreateRoomInfo()
-        room.roomName = "\(roomId)"
         button.isEnabled = false
-        VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
-            self.enterRoom(roomInfo: roomInfo!)
-            button.isEnabled = true
-        } failure: { error in
-            print("on create room fail: \(error.localizedDescription)")
-            button.isEnabled = true
-        }
-    }
-    
-    func enterRoom(roomInfo: AUIRoomInfo) {
-        if self.voiceChatView == nil {
-            self.voiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds,roomInfo: roomInfo)
-        }
         
-        voiceChatView?.onClickOffButton = { [weak self] in
+        let roomId = Int(arc4random_uniform(99999))
+        
+        let roomInfo = AUIRoomInfo()
+        roomInfo.roomId = "\(roomId)"
+        roomInfo.roomName = "\(roomId)"
+        roomInfo.owner = AUIRoomContext.shared.currentUserInfo
+                
+        let roomConfig = AUIRoomConfig()
+        //创建房间容器
+        let voiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds)
+        voiceChatView.onClickOffButton = { [weak self] in
             //房间内点击退出
             self?.destroyRoom(roomId: roomInfo.roomId)
         }
-        if let roomView = self.voiceChatView {
-            VoiceChatUIKit.shared.launchRoom(roomInfo: roomInfo,
-                                             roomView: roomView) {[weak self] error in
-                guard let self = self else {return}
-                if let _ = error { return }
-                //订阅房间被销毁回调
-                VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
-                self.view.addSubview(roomView)
+        generateToken(channelName: "\(roomId)",
+                      roomConfig: roomConfig,
+                      completion: {[weak self] error in
+            guard let self = self else {return}
+            defer {
+                button.isEnabled = true
             }
+            if let error = error {
+                self.navigationController?.popViewController(animated: true)
+                AUIToast.show(text: error.localizedDescription)
+                return
+            }
+            VoiceChatUIKit.shared.createRoom(roomInfo: roomInfo,
+                                             roomConfig: roomConfig,
+                                             chatView: voiceChatView) {[weak self] error in
+                guard let self = self else {return}
+                if let error = error {
+                    AUIToast.show(text: error.localizedDescription)
+                    return
+                }
+            }
+            
+            // 订阅房间被销毁回调
+            VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
+        })
+        
+        self.view.addSubview(voiceChatView)
+        self.voiceChatView = voiceChatView
+    }
+    
+    func enterRoom(roomInfo: AUIRoomInfo) {
+        let voiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds)
+        
+        voiceChatView.onClickOffButton = { [weak self] in
+            //房间内点击退出
+            self?.destroyRoom(roomId: roomInfo.roomId)
         }
+        let roomId = roomInfo.roomId
+        let roomConfig = AUIRoomConfig()
+        generateToken(channelName: roomId,
+                      roomConfig: roomConfig) {[weak self] err  in
+            guard let self = self else {return}
+            VoiceChatUIKit.shared.enterRoom(roomId: roomId,
+                                            roomConfig: roomConfig,
+                                            chatView: self.voiceChatView!) {[weak self] roomInfo, error in
+                guard let self = self else {return}
+                if let error = error {
+                    self.navigationController?.popViewController(animated: true)
+                    AUIToast.show(text: error.localizedDescription)
+                    return
+                }
+            }
+            
+            // 订阅房间被销毁回调
+            VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
+        }
+        
+        self.view.addSubview(voiceChatView)
+        self.voiceChatView = voiceChatView
     }
     
     @objc func onJoinAction() {
@@ -81,9 +123,11 @@ class ViewController: UIViewController {
                     for room in roomList {
                         if room.roomName == inputText {
                             self.enterRoom(roomInfo: room)
-                            break
+                            return
                         }
                     }
+                    
+                    AUIToast.show(text: "房间'\(inputText)'不存在")
                 }
             }
         }
@@ -98,20 +142,70 @@ class ViewController: UIViewController {
         self.voiceChatView?.onBackAction()
         self.voiceChatView?.removeFromSuperview()
         
-        VoiceChatUIKit.shared.destroyRoom(roomId: roomId)
+        VoiceChatUIKit.shared.leaveRoom(roomId: roomId)
         //在退出房间时取消订阅
         VoiceChatUIKit.shared.unbindRespDelegate(delegate: self)
     }
+    
+    private func generateToken(channelName: String,
+                               roomConfig: AUIRoomConfig,
+                               completion: @escaping ((Error?) -> Void)) {
+        let uid = VoiceChatUIKit.shared.commonConfig?.owner?.userId ?? ""
+        let rtcChorusChannelName = "\(channelName)_rtc_ex"
+        roomConfig.channelName = channelName
+        roomConfig.rtcChorusChannelName = rtcChorusChannelName
+        print("generateTokens: \(uid)")
+
+        let group = DispatchGroup()
+
+        var err: Error?
+        group.enter()
+        let tokenModel1 = AUITokenGenerateNetworkModel()
+        tokenModel1.channelName = channelName
+        tokenModel1.userId = uid
+        tokenModel1.request { error, result in
+            defer {
+                if err == nil {
+                    err = error
+                }
+                group.leave()
+            }
+            guard let tokenMap = result as? [String: String], tokenMap.count >= 2 else {return}
+            roomConfig.rtcToken = tokenMap["rtcToken"] ?? ""
+            roomConfig.rtmToken = tokenMap["rtmToken"] ?? ""
+        }
+
+        group.enter()
+        let tokenModel2 = AUITokenGenerateNetworkModel()
+        tokenModel2.channelName = rtcChorusChannelName
+        tokenModel2.userId = uid
+        tokenModel2.request { error, result in
+            defer {
+                if err == nil {
+                    err = error
+                }
+                group.leave()
+            }
+
+            guard let tokenMap = result as? [String: String], tokenMap.count >= 2 else {return}
+
+            roomConfig.rtcChorusRtcToken = tokenMap["rtcToken"] ?? ""
+        }
+
+        group.notify(queue: DispatchQueue.main) {
+            completion(err)
+        }
+    }
 }
 
-extension ViewController: AUIRoomManagerRespDelegate {
+extension ViewController: AUIVoiceChatRoomServiceRespDelegate {
     //房间销毁
-    @objc func onRoomDestroy(roomId: String) {
+    func onRoomDestroy(roomId: String) {
         self.destroyRoom(roomId: roomId)
     }
     
     //被踢出房间
-    @objc func onRoomUserBeKicked(roomId: String,userId: String) {
+    func onRoomUserBeKicked(roomId: String, userId: String) {
         self.destroyRoom(roomId: roomId)
     }
 }
