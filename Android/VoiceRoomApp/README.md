@@ -13,6 +13,7 @@
 ## 配置asceneskit
 - 下载语聊UIKit源码：https://github.com/AgoraIO-Community/AUIKitVoiceRoom
 - 复制语聊UIKit源码里Android/asceneskit代码到本项目asceneskit目录下
+- 复制语聊UIKit源码里AUIVoiceRoomUIKit.kt到本项目app/src/main/java/io/agora/app/voiceroom目录下
 
 ## 运行项目
 
