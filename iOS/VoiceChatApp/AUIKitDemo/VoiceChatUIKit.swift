@@ -12,7 +12,7 @@ import AgoraRtcKit
 import AgoraRtmKit
 import AScenesKit
 
-private let kSceneId = "VoiceRoomUIKit_Demo"
+private let kSceneId = "VoiceRoom_Demo"
 @objcMembers
 public class VoiceChatUIKit: NSObject {
     public static let shared: VoiceChatUIKit = VoiceChatUIKit()
