@@ -17,7 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //随机设置用户uid
         let uid = Int(arc4random_uniform(99999999))
-        // 设置基础信息到KaraokeUIKit里
+        
+        // 设置基础信息到VoiceChatUIKit里
         let commonConfig = AUICommonConfig()
         commonConfig.appId = KeyCenter.AppId
         commonConfig.appCert = KeyCenter.AppCertificate

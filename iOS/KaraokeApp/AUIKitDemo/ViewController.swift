@@ -52,10 +52,8 @@ class ViewController: UIViewController {
                       roomConfig: roomConfig,
                       completion: {[weak self] error in
             guard let self = self else {return}
-            defer {
-                button.isEnabled = true
-            }
             if let error = error {
+                button.isEnabled = true
                 self.navigationController?.popViewController(animated: true)
                 AUIToast.show(text: error.localizedDescription)
                 return
@@ -64,6 +62,7 @@ class ViewController: UIViewController {
                                              roomConfig: roomConfig,
                                              karaokeView: karaokeView) {[weak self] error in
                 guard let self = self else {return}
+                button.isEnabled = true
                 if let error = error {
                     AUIToast.show(text: error.localizedDescription)
                     return

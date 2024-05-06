@@ -7,15 +7,18 @@
   - [快速集成](#快速集成)
     - [1.集成SDK](#1集成sdk)
       - [a.新建项目](#a新建项目)
-      - [b.添加依赖库](#b添加依赖库)
+      - [b.添加依赖](#b添加依赖)
       - [c.设置权限](#c设置权限)
     - [2. 初始化VoiceChatUIKit](#2-初始化voicechatuikit)
     - [3. 房主创建房间](#3-房主创建房间)
       - [a.添加“创建房间”按钮](#a添加创建房间按钮)
-      - [b.创建VoiceChat房间](#b创建voicechat房间)
+      - [b.获取token](#b获取token)
+      - [c.创建VoiceChat房间](#c创建voicechat房间)
+        - [ViewController里声明一个房间容器的对象](#viewcontroller里声明一个房间容器的对象)
+        - [创建房间并启动房间详情页](#创建房间并启动房间详情页)
     - [4.进入房间](#4进入房间)
-      - [创建房间详情页并启动VoiceChat房间](#创建房间详情页并启动voicechat房间)
-    - [5. 观众进入房间准备（可选）](#5-观众进入房间准备可选)
+      - [加入房间并启动房间详情页](#加入房间并启动房间详情页)
+    - [5. 观众进入房间前准备（可选）](#5-观众进入房间前准备可选)
       - [a.添加“加入房间”按钮](#a添加加入房间按钮)
       - [b.获取VoiceChat房间信息](#b获取voicechat房间信息)
     - [6. 退出/销毁房间](#6-退出销毁房间)
@@ -43,12 +46,19 @@
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/create_new_ios_project4.jpg)
 
 
-#### b.添加依赖库
-**将以下源码复制到自己项目里，例如放在```AUIKitDemo.xcodeproj```同级目录下**
+#### b.添加依赖
 
-- [AScenesKit](https://github.com/AgoraIO-Community/AUIVoiceRoom/tree/main/iOS/AScenesKit)
+**将以下源码复制到自己的项目里，例如放在```AUIKitDemo.xcodeproj```同级目录下**
+
+- [KeyCenter.swift](https://github.com/AgoraIO-Community/AUIVoiceRoom/blob/main/iOS/AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
+- [VoiceChatUIKit.swift](https://github.com/AgoraIO-Community/AUIVoiceRoom/blob/main/iOS/AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)
+- [AScenesKit](https://github.com/AgoraIO-Community/AUIVoiceRoom/tree/main/iOS/AScenesKit/AScenesKit)
+- [AScenesKit.podspec](https://github.com/AgoraIO-Community/AUIVoiceRoom/blob/main/iOS/AScenesKit/AScenesKit.podspec)
 >
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/copy_asceneskit.jpg)
+
+
+**把 `KeyCenter.swift` 和 `VoiceChatUIKit.swift` 拖进工程里**
+TODO: 带增加图片
 
 **在```AUIKitDemo.xcodeproj```同级目录下创建一个```Podfile```文件，并添加如下内容**
 ```
@@ -58,8 +68,8 @@ platform :ios, '13.0'
 target 'AUIKitDemo' do
   use_frameworks!
   
-  pod 'AScenesKit', :path => './AScenesKit'
-  pod 'AgoraRtcEngine_Special_iOS', '4.1.1.17'
+  pod 'AScenesKit', :path => './AScenesKit.podspec'
+  pod 'AgoraRtcEngine_Special_iOS', '4.1.1.29'
 end
 
 post_install do |installer|
@@ -100,15 +110,25 @@ import AScenesKit
 **在AppDelegate.swift里初始化VoiceChatUIKit**
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    let uid = Int(arc4random_uniform(99999999))
-    let commonConfig = AUICommonConfig()
-    commonConfig.host = "https://service.agora.io/uikit-VoiceChat"
-    commonConfig.userId = "\(uid)"
-    commonConfig.userName = "user_\(uid)"
-    commonConfig.userAvatar = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_1.png"
-    VoiceChatUIKit.shared.setup(roomConfig: commonConfig,  
-                              rtcEngine: nil,   //如果有外部初始化的rtc engine
-                              rtmClient: nil)   //如果有外部初始化的rtm client
+        //随机设置用户uid
+        let uid = Int(arc4random_uniform(99999999))
+
+        // 设置基础信息到VoiceChatUIKit里
+        let commonConfig = AUICommonConfig()
+        commonConfig.appId = KeyCenter.AppId
+        commonConfig.appCert = KeyCenter.AppCertificate
+        commonConfig.basicAuth = KeyCenter.AppBasicAuth
+        commonConfig.imAppKey = KeyCenter.IMAppKey
+        commonConfig.imClientId = KeyCenter.IMClientId
+        commonConfig.imClientSecret = KeyCenter.IMClientSecret
+        commonConfig.host = KeyCenter.HostUrl
+        let ownerInfo = AUIUserThumbnailInfo()
+        ownerInfo.userId = "\(uid)"
+        ownerInfo.userName = "user_\(uid)"
+        ownerInfo.userAvatar = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_1.png"
+        commonConfig.owner = ownerInfo
+        VoiceChatUIKit.shared.setup(commonConfig: commonConfig,
+                                    apiConfig: nil)
     
     // Override point for customization after application launch.
     return true
@@ -135,56 +155,146 @@ override func viewDidLoad() {
     view.addSubview(createButton)
 }
 ```
-#### b.创建VoiceChat房间
+#### b.获取token
 ```swift
-@objc func onCreateAction(_ button: UIButton) {
-    let roomId = Int(arc4random_uniform(99999999))
-    let room = AUICreateRoomInfo()
-    room.roomName = "\(roomId)"
-    button.isEnabled = false
-    VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
-        self.enterRoom(roomInfo: roomInfo!)
-        button.isEnabled = true
-    } failure: { error in
-        print("on create room fail: \(error.localizedDescription)")
-        button.isEnabled = true
+private func generateToken(channelName: String,
+                           roomConfig: AUIRoomConfig,
+                           completion: @escaping ((Error?) -> Void)) {
+    let uid = VoiceChatUIKit.shared.commonConfig?.owner?.userId ?? ""
+    let rtcChorusChannelName = "\(channelName)_rtc_ex"
+    roomConfig.channelName = channelName
+    roomConfig.rtcChorusChannelName = rtcChorusChannelName
+    print("generateTokens: \(uid)")
+
+    let group = DispatchGroup()
+
+    var err: Error?
+    group.enter()
+    let tokenModel1 = AUITokenGenerateNetworkModel()
+    tokenModel1.channelName = channelName
+    tokenModel1.userId = uid
+    tokenModel1.request { error, result in
+        defer {
+            if err == nil {
+                err = error
+            }
+            group.leave()
+        }
+        guard let tokenMap = result as? [String: String], tokenMap.count >= 2 else {return}
+        roomConfig.rtcToken = tokenMap["rtcToken"] ?? ""
+        roomConfig.rtmToken = tokenMap["rtmToken"] ?? ""
+    }
+
+    group.enter()
+    let tokenModel2 = AUITokenGenerateNetworkModel()
+    tokenModel2.channelName = rtcChorusChannelName
+    tokenModel2.userId = uid
+    tokenModel2.request { error, result in
+        defer {
+            if err == nil {
+                err = error
+            }
+            group.leave()
+        }
+
+        guard let tokenMap = result as? [String: String], tokenMap.count >= 2 else {return}
+
+        roomConfig.rtcChorusRtcToken = tokenMap["rtcToken"] ?? ""
+    }
+
+    group.notify(queue: DispatchQueue.main) {
+        completion(err)
     }
 }
 ```
-
-### 4.进入房间
-**ViewController里声明一个VoiceChat房间容器的属性**
+#### c.创建VoiceChat房间
+##### ViewController里声明一个房间容器的对象
 ```swift
 class ViewController: UIViewController {
-    var VoiceChatView: AUIVoiceChatRoomView?
+    var voiceChatView: AUIVoiceChatRoomView?
 
     ....
 }
 ```
-#### 创建房间详情页并启动VoiceChat房间
+##### 创建房间并启动房间详情页
 ```swift
-func enterRoom(roomInfo: AUIRoomInfo) {
-    VoiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds)
-    VoiceChatView!.onClickOffButton = { [weak self] in
+@objc func onCreateAction(_ button: UIButton) {
+    button.isEnabled = false
+        
+    let roomId = Int(arc4random_uniform(99999))
+    
+    let roomInfo = AUIRoomInfo()
+    roomInfo.roomId = "\(roomId)"
+    roomInfo.roomName = "\(roomId)"
+    roomInfo.owner = AUIRoomContext.shared.currentUserInfo
+            
+    let roomConfig = AUIRoomConfig()
+    //创建房间容器
+    let voiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds)
+    voiceChatView.onClickOffButton = { [weak self] in
         //房间内点击退出
         //self?.destroyRoom(roomId: roomInfo.roomId)
         assert(false, "正常退出需要打开上面的注释并且删掉当前的assert")
     }
-    
-    if let roomView = self.VoiceChatView {
-        VoiceChatUIKit.shared.launchRoom(roomInfo: roomInfo,
-                                         roomView: roomView) {[weak self] error in
-            guard let self = self else {return}
-            if let _ = error { return }
-            //订阅房间被销毁回调
-            //VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
-            self.view.addSubview(roomView)
+    generateToken(channelName: "\(roomId)",
+                  roomConfig: roomConfig,
+                  completion: {[weak self] error in
+        guard let self = self else {return}
+        if let error = error { 
+            button.isEnabled = true
+            return 
         }
-    }
+        VoiceChatUIKit.shared.createRoom(roomInfo: roomInfo,
+                                         roomConfig: roomConfig,
+                                         chatView: voiceChatView) {[weak self] error in
+            guard let self = self else {return}
+            button.isEnabled = true
+            if let error = error { return }
+        }
+        
+        // 订阅房间被销毁回调
+        //VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
+    })
+    
+    self.view.addSubview(voiceChatView)
+    self.voiceChatView = voiceChatView
 }
 ```
 
-### 5. 观众进入房间准备（可选）
+### 4.进入房间
+
+#### 加入房间并启动房间详情页
+```swift
+func enterRoom(roomInfo: AUIRoomInfo) {
+  let voiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds)
+        
+  voiceChatView.onClickOffButton = { [weak self] in
+      //房间内点击退出
+      //self?.destroyRoom(roomId: roomInfo.roomId)
+      assert(false, "正常退出需要打开上面的注释并且删掉当前的assert")
+  }
+  let roomId = roomInfo.roomId
+  let roomConfig = AUIRoomConfig()
+  generateToken(channelName: roomId,
+                roomConfig: roomConfig) {[weak self] err  in
+      guard let self = self else { return }
+      VoiceChatUIKit.shared.enterRoom(roomId: roomId,
+                                      roomConfig: roomConfig,
+                                      chatView: self.voiceChatView!) {[weak self] roomInfo, error in
+          guard let self = self else {return}
+          if let error = error { return }
+      }
+      
+      // 订阅房间被销毁回调
+      //VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
+  }
+
+  self.view.addSubview(voiceChatView)
+  self.voiceChatView = voiceChatView
+}
+```
+
+### 5. 观众进入房间前准备（可选）
 #### a.添加“加入房间”按钮
 ```swift
 override func viewDidLoad() {
@@ -235,16 +345,16 @@ override func viewDidLoad() {
 ```swift
 func destroyRoom(roomId: String) {
     //点击退出
-    self.VoiceChatView?.onBackAction()
-    self.VoiceChatView?.removeFromSuperview()
+    self.voiceChatView?.onBackAction()
+    self.voiceChatView?.removeFromSuperview()
     
-    VoiceChatUIKit.shared.destroyRoom(roomId: roomId)
+    VoiceChatUIKit.shared.leaveRoom(roomId: roomId)
     //在退出房间时取消订阅
     VoiceChatUIKit.shared.unbindRespDelegate(delegate: self)
 }
 ```
 #### a.主动退出
-**在[创建房间详情页并启动VoiceChat房间](#创建房间详情页并启动voicechat房间)里打开注释设置回调，调用destroyRoom方法，即可主动退出房间**
+**在 [创建房间并启动房间详情页](#创建房间并启动房间详情页) 与 [加入房间并启动房间详情页](#加入房间并启动房间详情页) 里打开注释设置回调，调用destroyRoom方法，即可主动退出房间**
 ```swift
 //AUIVoiceChatRoomView提供了onClickOffButton点击返回的clousure
 VoiceChatView.onClickOffButton = { [weak self] in
@@ -254,35 +364,39 @@ VoiceChatView.onClickOffButton = { [weak self] in
 ```
 
 #### b.被动退出
-**首先在[创建房间详情页并启动VoiceChat房间](#创建房间详情页并启动voicechat房间)里打开注释订阅AUIRoomManagerRespDelegate的回调**  
-**然后在销毁房间时设置取消订阅**  
-**最后后通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy来处理房间销毁**
+**首先在 [创建房间并启动房间详情页](#创建房间并启动房间详情页) 与 [加入房间并启动房间详情页](#加入房间并启动房间详情页) 里打开注释订阅 `AUIVoiceChatRoomServiceRespDelegate` 的回调**  
 ```swift
-VoiceChatUIKit.shared.launchRoom(roomInfo: roomInfo,
-                                 roomView: roomView!) {[weak self] error in
-    ...
-    
+@objc func onCreateAction(_ button: UIButton) {
+    //...
+        
+    // 订阅房间被销毁回调
     VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 
-    ...
+    //...
 }
+```
 
-func destroyRoom(roomId: String) {
-    ...
+```swift
+func enterRoom(roomInfo: AUIRoomInfo) {
+    //...
+        
+    // 订阅房间被销毁回调
+    VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 
-    VoiceChatUIKit.shared.unbindRespDelegate(delegate: self)
-
-    ...
+    //...
 }
+```
 
-extension ViewController: AUIRoomManagerRespDelegate {
+**然后通过 `AUIVoiceChatRoomServiceRespDelegate` 回调方法中的 `onRoomDestroy` 和 `onRoomUserBeKicked` 来处理房间销毁**
+```swift
+extension ViewController: AUIKaraokeRoomServiceRespDelegate {
     //房间销毁
-    @objc func onRoomDestroy(roomId: String) {
+    func onRoomDestroy(roomId: String) {
         self.destroyRoom(roomId: roomId)
     }
-
+    
     //被踢出房间
-    @objc func onRoomUserBeKicked(roomId: String,userId: String) {
+    func onRoomUserBeKicked(roomId: String, userId: String) {
         self.destroyRoom(roomId: roomId)
     }
 }
