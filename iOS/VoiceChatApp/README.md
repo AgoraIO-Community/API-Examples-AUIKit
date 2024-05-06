@@ -58,7 +58,7 @@
 
 
 **把 `KeyCenter.swift` 和 `VoiceChatUIKit.swift` 拖进工程里**
-TODO: 带增加图片
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/example-addsource-voicechat.png)
 
 **在```AUIKitDemo.xcodeproj```同级目录下创建一个```Podfile```文件，并添加如下内容**
 ```

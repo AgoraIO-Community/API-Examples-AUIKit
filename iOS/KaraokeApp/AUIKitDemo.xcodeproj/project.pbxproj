@@ -127,8 +127,8 @@
 		DD973C682ADE30CC0002453C /* AUIKitDemo */ = {
 			isa = PBXGroup;
 			children = (
-				DD2123C82BDA400A003A3C4E /* KaraokeUIKit.swift */,
 				DD2123C72BDA400A003A3C4E /* KeyCenter.swift */,
+				DD2123C82BDA400A003A3C4E /* KaraokeUIKit.swift */,
 				DD973C692ADE30CC0002453C /* AppDelegate.swift */,
 				DD973C6B2ADE30CC0002453C /* SceneDelegate.swift */,
 				DD973C6D2ADE30CC0002453C /* ViewController.swift */,

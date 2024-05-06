@@ -56,7 +56,7 @@
 
 
 **把 `KeyCenter.swift` 和 `KaraokeUIKit.swift` 拖进工程里**
-TODO: 带增加图片
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/ios/example-addsource-karaoke.png)
 
 **在```AUIKitDemo.xcodeproj```同级目录下创建一个```Podfile```文件，并添加如下内容**
 ```
