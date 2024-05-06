@@ -13,10 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import io.agora.app.karaoke.ui.theme.KaraokeAppTheme
-import io.agora.asceneskit.karaoke.KaraokeUiKit
+import io.agora.asceneskit.karaoke.AUIAPIConfig
 import io.agora.auikit.model.AUICommonConfig
-import io.agora.auikit.model.AUICreateRoomInfo
+import io.agora.auikit.model.AUIRoomContext
+import io.agora.auikit.model.AUIRoomInfo
+import io.agora.auikit.model.AUIUserThumbnailInfo
 import java.util.Random
+import java.util.UUID
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,32 +38,41 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.main_activity)
 
         // 初始化KaraokeUiKit
-        KaraokeUiKit.setup(AUICommonConfig().apply {
-            context = applicationContext
-            host = "https://service.agora.io/uikit-karaoke"
+
+        val config = AUICommonConfig()
+        config.context = this
+        config.host = "https://service.agora.io/uikit-v2"
+        config.appId = "<==your agora app id==>"
+        config.appCert = "<==your agora app cert==>"
+        config.imAppKey = "<==your im app key==>"
+        config.imClientId = "<==your im client id==>"
+        config.imClientSecret = "<==your im client secret==>"
+        // Randomly generate local user information
+        config.owner = AUIUserThumbnailInfo().apply {
             userId = (Random().nextInt(1000) + 10000).toString()
             userName = "User-$userId"
             userAvatar = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_1.png"
-        })
+        }
+        // Setup karaokeUiKit
+        KaraokeUIKit.setup(
+            commonConfig = config, // must
+            apiConfig = AUIAPIConfig(
+                ktvApi = null,
+                rtcEngineEx = null,
+                rtmClient = null
+            )
+        )
 
         findViewById<Button>(R.id.btnCreateRoom).setOnClickListener {
             // 创建房间按钮点击
             // 随机生成房间名
             val roomName = "${Random().nextInt(100) + 1000}"
-            // 调用KaraokeUiKit创建房间
-            val createRoomInfo = AUICreateRoomInfo()
-            createRoomInfo.roomName = roomName
-            KaraokeUiKit.createRoom(
-                createRoomInfo,
-                success = { roomInfo ->
-                    // 创建房间成功，跳转到房间详情页
-                    RoomActivity.launch(this@MainActivity, roomInfo)
-                },
-                failure = {
-                    // 创建房间失败
-                    Toast.makeText(this@MainActivity, "Create Room failed. reason: ${it.code} - ${it.message}", Toast.LENGTH_SHORT).show()
-                }
-            )
+            val roomInfo = AUIRoomInfo()
+            roomInfo.roomId = UUID.randomUUID().toString()
+            roomInfo.roomName = roomName
+            roomInfo.thumbnail = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_1.png"
+            roomInfo.owner = AUIRoomContext.shared().currentUserInfo
+            RoomActivity.launch(this@MainActivity, roomInfo, true)
         }
 
         findViewById<Button>(R.id.btnJoinRoom).setOnClickListener {
@@ -80,7 +92,7 @@ class MainActivity : ComponentActivity() {
                         return@setPositiveButton
                     }
                     // 查询房间信息
-                    KaraokeUiKit.getRoomList(0, 50,
+                    KaraokeUIKit.getRoomList(0, 50,
                         success = { list ->
                             val roomInfo = list.findLast { it.roomName == roomName }
                             if(roomInfo == null){
@@ -90,7 +102,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             // 拉起房间详情页
-                            RoomActivity.launch(this@MainActivity, roomInfo)
+                            RoomActivity.launch(this@MainActivity, roomInfo, false)
                         },
                         failure = {
                             Toast.makeText(this@MainActivity, "Get room list failed. ${it.code} - ${it.message}", Toast.LENGTH_SHORT).show()

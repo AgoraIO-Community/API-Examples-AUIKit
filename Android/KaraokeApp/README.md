@@ -12,6 +12,8 @@
 ## 配置asceneskit
 - 下载AUIKaraoke源码：https://github.com/AgoraIO-Community/AUIKaraoke
 - 将上面下好源码的Android/asceneskit库复制到本项目asceneskit目录下
+- 将上面源码里的Android/app/src/main/java/io/agora/app/karaoke/KaraokeUIKit.kt文件复制到本项目asceneskit/src/main/java/io/agora/app/karaoke目录下
+
 ## 运行项目
 
 ## 许可证

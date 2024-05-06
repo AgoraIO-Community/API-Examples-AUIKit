@@ -4,20 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import io.agora.asceneskit.karaoke.AUIKaraokeRoomServiceRespObserver
 import io.agora.asceneskit.karaoke.KaraokeRoomView
-import io.agora.asceneskit.karaoke.KaraokeUiKit
 import io.agora.auikit.model.AUIRoomInfo
-import io.agora.auikit.service.IAUIRoomManager.AUIRoomManagerRespObserver
 import io.agora.auikit.utils.PermissionHelp
 
 class RoomActivity : FragmentActivity() {
 
     companion object {
         const val EXTRA_ROOM_INFO = "RoomInfo"
+        const val EXTRA_IS_CREATE = "isCreate"
 
-        fun launch(context: Context, roomInfo: AUIRoomInfo){
+        fun launch(context: Context, roomInfo: AUIRoomInfo, isCreate: Boolean){
             val intent = Intent(context, RoomActivity::class.java)
             intent.putExtra(EXTRA_ROOM_INFO, roomInfo)
+            intent.putExtra(EXTRA_IS_CREATE, isCreate)
             context.startActivity(intent)
         }
     }
@@ -27,8 +28,12 @@ class RoomActivity : FragmentActivity() {
         intent.getSerializableExtra(EXTRA_ROOM_INFO) as AUIRoomInfo
     }
 
+    private val isCreate by lazy {
+        intent.getBooleanExtra(EXTRA_IS_CREATE, false)
+    }
+
     // 房间事件观察者
-    private val roomManagerRespObserver = object: AUIRoomManagerRespObserver{
+    private val roomManagerRespObserver = object: AUIKaraokeRoomServiceRespObserver {
 
         override fun onRoomDestroy(roomId: String) {
             super.onRoomDestroy(roomId)
@@ -56,8 +61,31 @@ class RoomActivity : FragmentActivity() {
         PermissionHelp(this).checkMicPerm(
             granted = {
                 // 获取到权限
-                // 并启动房间
-                KaraokeUiKit.launchRoom(roomInfo, karaokeRoomView)
+                KaraokeUIKit.generateToken(roomInfo.roomId,
+                    onSuccess = {roomConfig ->
+                        // 并启动房间
+                        if(isCreate){
+                            // 创建并进入房间
+                            KaraokeUIKit.createRoom(roomInfo, roomConfig, karaokeRoomView){ ex, roomInfo ->
+                                if(ex != null){
+                                    // 创建房间失败，直接退出
+                                    finish()
+                                }
+                            }
+                        }else{
+                            // 进入房间
+                            KaraokeUIKit.enterRoom(roomInfo, roomConfig, karaokeRoomView){ ex, roomInfo ->
+                                if(ex != null){
+                                    // 进入房间失败，直接退出
+                                    finish()
+                                }
+                            }
+                        }
+                    },
+                    onFailure = {
+                        // 获取token失败，直接退出
+                        finish()
+                    })
             },
             unGranted = {
                 // 没有获取到权限，直接退出
@@ -66,7 +94,7 @@ class RoomActivity : FragmentActivity() {
         )
 
         // 注册房间事件观察者
-        KaraokeUiKit.registerRoomRespObserver(roomManagerRespObserver)
+        KaraokeUIKit.registerRoomRespObserver(roomInfo.roomId, roomManagerRespObserver)
     }
 
     override fun onBackPressed() {
@@ -77,8 +105,8 @@ class RoomActivity : FragmentActivity() {
 
     private fun destroyRoom() {
         // 退出/销毁房间
-        KaraokeUiKit.destroyRoom(roomInfo.roomId)
+        KaraokeUIKit.leaveRoom(roomInfo.roomId)
         // 取消注册房间事件观察者
-        KaraokeUiKit.unRegisterRoomRespObserver(roomManagerRespObserver)
+        KaraokeUIKit.unRegisterRoomRespObserver(roomInfo.roomId, roomManagerRespObserver)
     }
 }
